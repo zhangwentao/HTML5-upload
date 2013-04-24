@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+	<head>
+		<title>HTML5多文件上传DEMO</title>
+	</head>
+	<body>
+		{% csrf_token %}
+		<input type="file" name="photo[]" id="pics-input" multiple/>
+		<input type="button" id="upload-btn" value="上传"/>
+		<script src="/static/upload/js/upload.js"></script>
+	</body>
+</html>
