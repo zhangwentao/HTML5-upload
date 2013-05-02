@@ -1,0 +1,43 @@
+#thumb-container {
+	width: 600px;
+	height: 400px;
+	background-color: gray;
+	border: 1px solid black;
+	overflow-y: scroll;
+}
+
+.thumb {
+	position: relative;
+	text-align: center;
+	width: 100px;
+	height: 100px;
+	float: left;
+	background-color: blue;
+	margin: 5px;
+	overflow: hidden;
+}
+
+.thumb img {
+	position: absolute;
+}
+
+.close-btn {
+	color: #fff;
+	width: 1em;
+	height: 1em;
+	background-color: gray;
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	z-index: 999;
+	line-height: 1em;
+	cursor: pointer;
+}
+
+progress {
+	position: absolute;
+	width: 100px;
+	z-index: 1000;
+	bottom: 0px;
+	left: 0px;
+}

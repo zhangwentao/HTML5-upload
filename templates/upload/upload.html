@@ -2,11 +2,15 @@
 <html>
 	<head>
 		<title>HTML5多文件上传DEMO</title>
+		<link rel="stylesheet" href="/static/upload/css/upload.css"/>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="/static/upload/js/upload.js"></script>
 	</head>
 	<body>
 		{% csrf_token %}
-		<input type="file" name="photo[]" id="pics-input" multiple/>
+		<input type="file" id="pics-input" multiple/>
 		<input type="button" id="upload-btn" value="上传"/>
-		<script src="/static/upload/js/upload.js"></script>
+		<div id="thumb-container">
+		</div>
 	</body>
 </html>
