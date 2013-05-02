@@ -6,38 +6,38 @@
 	overflow-y: scroll;
 }
 
-.thumb {
-	position: relative;
-	text-align: center;
+.thumb,
+.mask {
 	width: 100px;
 	height: 100px;
-	float: left;
-	background-color: blue;
-	margin: 5px;
+}
+
+.thumb {
+	position: relative;
 	overflow: hidden;
+	float: left;
+	margin: 5px 5px;
 }
 
 .thumb img {
 	position: absolute;
 }
 
-.close-btn {
-	color: #fff;
-	width: 1em;
-	height: 1em;
-	background-color: gray;
+.mask {
 	position: absolute;
-	right: 1px;
-	top: 1px;
-	z-index: 999;
-	line-height: 1em;
-	cursor: pointer;
+	background-color: #000;
+	opacity: 0.7;
 }
 
-progress {
+.close-btn {
+	width: 1em;
+	height: 1em;
 	position: absolute;
-	width: 100px;
-	z-index: 1000;
-	bottom: 0px;
-	left: 0px;
+	line-height: 1em;
+	right: 1px;
+	top: 1px;
+	color: #fff;
+	cursor: pointer;
+	background: #000;
+	text-align: center;
 }

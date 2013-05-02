@@ -7,16 +7,7 @@ $(document).ready(function(){
 	console.log(key);
 	fileInput.on('change',handleFileInputChange);
 	$('#upload-btn').on('click',handleUploadBtnClick);	
-	function adjust(img,w,h) {
-		var originRatio = img.width / img.height;
-		if (originRatio >= w / h) {
-			img.height = h;
-			img.style.left = (-(img.width - w) / 2)+'px';
-		} else {
-			img.width = w;
-			img.style.top = (-(img.height - h) / 2)+'px';
-		}
-	}
+
 
 	function handleFileInputChange(evt) {
 		renderPicFiles(evt.target.files);
@@ -27,18 +18,8 @@ $(document).ready(function(){
 			console.log(file);
 			var fileItem = new UploadItem(file,idGen.gen());
 			uploadList.push(fileItem);
-			var fileReader = new FileReader();
-			fileReader.onload = function(evt) {
-				var thumb = $('<div class="thumb"><div class="close-btn" upload-id="'+fileItem.id+'">x</div><progress></progress></div>');				
-				var img = $('<img/>');
-				thumb.append(img);
-				thumbCon.append(thumb);
-				img.on('load',function(evt){
-					adjust(this,100,100);
-				});
-				img.attr('src',evt.target.result);
-			};
-			fileReader.readAsDataURL(file);
+			var thumb = new Thumb(fileItem);
+			thumbCon.append(thumb.dom);
 		});
 	}
 
@@ -51,10 +32,7 @@ $(document).ready(function(){
 	function uploadFile(fileItem) {
 		var req = new XMLHttpRequest();
 		req.upload.onprogress = function(evt) {
-			var progressbar = $('[upload-id="'+fileItem.id+'"]').siblings('progress')[0];
-			console.log(progressbar);
-			progressbar.max = evt.total;
-			progressbar.value = evt.position;
+			fileItem.thumb.setProgress(evt.position,evt.total);
 		}
 		req.open('POST','/upload/upload/');
 		var data = new FormData();
@@ -73,6 +51,43 @@ $(document).ready(function(){
 });
 
 //TODO: a upload file list Object,contains add file, remove file function
+function adjust(img,w,h) {
+	var originRatio = img.width / img.height;
+	if (originRatio >= w / h) {
+		img.height = h;
+		var width = img.height * originRatio;
+		img.style.left = (-(width - w) / 2)+'px';
+	} else {
+		img.width = w;
+		var height = img.width / originRatio;
+		img.style.top = (-(height - h) / 2)+'px';
+	}
+}
+
+// 缩略图view
+function Thumb(fileItem) {
+	var thumb = $(this.TEMPLATE_HTML);	
+	this.fileItem = fileItem;
+	this.fileItem.thumb = this;
+	var fileReader = new FileReader();
+	fileReader.onloadend = function(evt) {
+		var img = $('img',thumb);
+		img.on('load',function(evt){
+			adjust(this,100,100);
+		});
+		img.attr('src',evt.target.result);
+	};
+	fileReader.readAsDataURL(fileItem.file);
+	this.dom = thumb[0];
+}
+
+Thumb.prototype.TEMPLATE_HTML = '<div class="thumb"><img src=""/><div class="mask"></div><div class="close-btn">x</div></div>';
+
+Thumb.prototype.setProgress = function(position, total) {
+	var mask = $('.mask',this.dom);
+	var originMaskHeight = $(this.dom).height();
+	mask.height(originMaskHeight - originMaskHeight*(position/total));
+};
 
 // 上传项
 function UploadItem(file,id) {
