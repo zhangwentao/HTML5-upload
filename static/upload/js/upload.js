@@ -42,7 +42,7 @@ $(document).ready(function(){
 			fileItem.status = fileItem.DONE;
 			fileItem.thumb.setStatus(fileItem.status);
 		};
-		$(thumb.dom).on('cancelupload',function(evt){
+		$(fileItem.thumb.dom).on('cancelupload',function(evt){
 			console.log('-abort');
 			req.abort();
 			console.log('abort-');
