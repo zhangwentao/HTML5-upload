@@ -8,7 +8,6 @@ $(document).ready(function(){
 	fileInput.on('change',handleFileInputChange);
 	$('#upload-btn').on('click',handleUploadBtnClick);	
 
-
 	function handleFileInputChange(evt) {
 		renderPicFiles(evt.target.files);
 	}
@@ -25,7 +24,10 @@ $(document).ready(function(){
 
 	function handleUploadBtnClick(evt) {
 		for(var i = 0; i < uploadList.length; i++) {
-			uploadFile(uploadList[i]);
+			var file = uploadList[i];
+			if(file.status == file.WAIT) {
+				uploadFile(file);
+			}
 		}
 	}
 
@@ -40,6 +42,11 @@ $(document).ready(function(){
 			fileItem.status = fileItem.DONE;
 			fileItem.thumb.setStatus(fileItem.status);
 		};
+		$(thumb.dom).on('cancelupload',function(evt){
+			console.log('-abort');
+			req.abort();
+			console.log('abort-');
+		});
 		req.open('POST','/upload/upload/');
 		var data = new FormData();
 		data.append(key.name,key.value);
