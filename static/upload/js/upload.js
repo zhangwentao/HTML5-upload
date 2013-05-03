@@ -98,7 +98,7 @@ function Thumb(fileItem) {
 	});
 }
 
-Thumb.prototype.TEMPLATE_HTML = '<div class="thumb"><img src=""/><div class="mask"></div><div class="close-btn">x</div></div>';
+Thumb.prototype.TEMPLATE_HTML = '<div class="thumb"><img src=""/><div class="mask"></div><div class="status"></div><div class="close-btn">x</div></div>';
 
 Thumb.prototype.setProgress = function(position, total) {
 	var mask = $('.mask',this.dom);
@@ -106,10 +106,18 @@ Thumb.prototype.setProgress = function(position, total) {
 	mask.height(originMaskHeight - originMaskHeight*(position/total));
 };
 
-Thumb.prototype.setStatus = function(statusString) {
-	var mask = $('.mask',this.dom);
-	mask.text(statusString);
+Thumb.prototype.setStatus = function(status) {
+	var mask = $('.status',this.dom);
+	var statusType = UploadItem.prototype;
+	if(status == statusType.DONE) {
+		mask.text('done');
+		$('.close-btn',this.dom).hide();
+	}
+	else if(status == statusType.UPLOADING) {
+		mask.text('uploading...');
+	}
 };
+
 // 上传项
 function UploadItem(file,id) {
 	this.file = file;
