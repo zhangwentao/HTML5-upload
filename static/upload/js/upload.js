@@ -101,7 +101,7 @@ Thumb.prototype.setProgress = function(position, total) {
 
 Thumb.prototype.setStatus = function(statusString) {
 	var mask = $('.mask',this.dom);
-	mask.text = statusString;
+	mask.text(statusString);
 };
 // 上传项
 function UploadItem(file,id) {
