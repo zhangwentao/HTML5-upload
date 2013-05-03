@@ -107,15 +107,16 @@ Thumb.prototype.setProgress = function(position, total) {
 };
 
 Thumb.prototype.setStatus = function(status) {
-	var mask = $('.status',this.dom);
+	var statusTip = $('.status',this.dom);
 	var statusType = UploadItem.prototype;
 	if(status == statusType.DONE) {
-		mask.text('done');
+		statusTip.text('done');
 		$('.close-btn',this.dom).hide();
 	}
 	else if(status == statusType.UPLOADING) {
-		mask.text('uploading...');
+		statusTip.text('uploading...');
 	}
+	statusTip.show();
 };
 
 // 上传项
