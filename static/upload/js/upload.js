@@ -1,7 +1,7 @@
 $(document).ready(function(){
+	var uploadList = new UploadItemList();
 	var fileInput = $('#pics-input');		
 	var thumbCon = $('#thumb-container');
-	var uploadList = new UploadItemList();
 	var idGen = new UploadIdGen('upload-pic-');
 	var key = $('input[type="hidden"]')[0];
 	console.log(key);
@@ -15,10 +15,10 @@ $(document).ready(function(){
 
 	function renderPicFiles(fileList) {
 		$.each(fileList,function(index,file) {
-			console.log(file);
 			var fileItem = new UploadItem(file,idGen.gen());
 			uploadList.push(fileItem);
 			var thumb = new Thumb(fileItem);
+			$(thumb.dom).on('cancelupload',handleCancelUpload);
 			thumbCon.append(thumb.dom);
 		});
 	}
@@ -32,8 +32,14 @@ $(document).ready(function(){
 	function uploadFile(fileItem) {
 		var req = new XMLHttpRequest();
 		req.upload.onprogress = function(evt) {
+			fileItem.status = fileItem.UPLOADING;
 			fileItem.thumb.setProgress(evt.position,evt.total);
-		}
+			fileItem.thumb.setStatus(fileItem.status);
+		};
+		req.upload.onload = function(evt) {
+			fileItem.status = fileItem.DONE;
+			fileItem.thumb.setStatus(fileItem.status);
+		};
 		req.open('POST','/upload/upload/');
 		var data = new FormData();
 		data.append(key.name,key.value);
@@ -41,13 +47,11 @@ $(document).ready(function(){
 		req.send(data);
 	}
 
-	$('.close-btn').live('click',function(evt){
-		var closeBtn = $(evt.target);
-		var uploadId = closeBtn.attr('upload-id');
-		console.log(uploadId);
-		uploadList.removeItemById(uploadId);
-		closeBtn.parent().parent().get(0).removeChild(closeBtn.parent().get(0));
-	});
+	function handleCancelUpload(evt) {
+		uploadList.removeItem(evt.fileItem);
+		thumbCon[0].removeChild(evt.target);
+	}
+
 });
 
 //TODO: a upload file list Object,contains add file, remove file function
@@ -66,6 +70,7 @@ function adjust(img,w,h) {
 
 // 缩略图view
 function Thumb(fileItem) {
+	var self = this;
 	var thumb = $(this.TEMPLATE_HTML);	
 	this.fileItem = fileItem;
 	this.fileItem.thumb = this;
@@ -79,6 +84,11 @@ function Thumb(fileItem) {
 	};
 	fileReader.readAsDataURL(fileItem.file);
 	this.dom = thumb[0];
+	$('.close-btn',thumb).on('click',function(evt) {
+		var event = new $.Event('cancelupload');
+		event.fileItem = self.fileItem;
+		thumb.trigger(event);
+	});
 }
 
 Thumb.prototype.TEMPLATE_HTML = '<div class="thumb"><img src=""/><div class="mask"></div><div class="close-btn">x</div></div>';
@@ -89,6 +99,10 @@ Thumb.prototype.setProgress = function(position, total) {
 	mask.height(originMaskHeight - originMaskHeight*(position/total));
 };
 
+Thumb.prototype.setStatus = function(statusString) {
+	var mask = $('.mask',this.dom);
+	mask.text = statusString;
+};
 // 上传项
 function UploadItem(file,id) {
 	this.file = file;
