@@ -6,7 +6,8 @@
 	overflow-y: scroll;
 }
 
-.thumb {
+.thumb,
+.mask {
 	width: 100px;
 }
 
